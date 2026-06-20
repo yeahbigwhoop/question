@@ -216,11 +216,11 @@
     .modal-btn {
       display: none;
       background: none;
-      border: 2px solid rgba(0,0,0,0.22);
+      border: 2.5px solid rgba(0,0,0,0.22);
       border-radius: 40px;
-      padding: 10px 24px;
+      padding: 15px 36px;
       font-family: 'Work Sans', sans-serif;
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 700;
       letter-spacing: 0.06em;
       color: rgba(0,0,0,0.6);
@@ -236,17 +236,17 @@
 
     #closeOverlay {
       position: absolute;
-      top: 18px; left: 22px;
+      top: 16px; right: 24px;
       background: none;
       border: none;
-      font-size: 26px;
-      font-weight: 700;
-      color: rgba(0,0,0,0.35);
+      font-size: 52px;
+      font-weight: 300;
+      color: rgba(0,0,0,0.28);
       cursor: pointer;
       line-height: 1;
       transition: color 0.15s;
     }
-    #closeOverlay:hover { color: rgba(0,0,0,0.75); }
+    #closeOverlay:hover { color: rgba(0,0,0,0.7); }
 
     /* ── Thinking state ──────────────────────────────────────────────────── */
     #thinkingDots {
@@ -273,40 +273,40 @@
     #submitOverlay.open { opacity: 1; pointer-events: all; }
     #submitBox {
       background: #fff;
-      border-radius: 18px;
-      padding: 40px 44px;
-      max-width: 520px;
+      border-radius: 24px;
+      padding: 60px 64px 52px;
+      max-width: 720px;
       width: 90%;
       text-align: center;
     }
     #submitBox h2 {
-      font-size: 18px;
-      font-weight: 600;
+      font-size: 32px;
+      font-weight: 700;
       color: #111;
-      margin-bottom: 6px;
+      margin-bottom: 10px;
     }
     #submitBox p {
-      font-size: 13px;
+      font-size: 15px;
       color: rgba(0,0,0,0.45);
-      margin-bottom: 22px;
+      margin-bottom: 32px;
     }
     #submitInput {
       width: 100%;
-      border: 1.5px solid rgba(0,0,0,0.15);
-      border-radius: 10px;
-      padding: 13px 16px;
+      border: 2px solid rgba(0,0,0,0.15);
+      border-radius: 14px;
+      padding: 18px 22px;
       font-family: 'Work Sans', sans-serif;
-      font-size: 15px;
+      font-size: 20px;
       color: #111;
       outline: none;
       transition: border-color 0.2s;
     }
     #submitInput:focus { border-color: #E07C00; }
     #submitFeedback {
-      font-size: 12px;
+      font-size: 14px;
       color: rgba(0,0,0,0.4);
-      margin-top: 10px;
-      min-height: 18px;
+      margin-top: 14px;
+      min-height: 20px;
     }
   </style>
 </head>
@@ -348,8 +348,8 @@
   <div id="submitOverlay">
     <div id="submitBox">
       <h2>Add a question</h2>
-      <p>Press Enter to save. It'll show up next time someone hits "Give me a question."</p>
-      <input id="submitInput" type="text" placeholder="What's something no one knows about you?" maxlength="150" />
+      <p>Press Enter to save. It'll show up next time someone hits "Get question."</p>
+      <input id="submitInput" type="text" placeholder="" maxlength="150" />
       <div id="submitFeedback"></div>
     </div>
   </div>
