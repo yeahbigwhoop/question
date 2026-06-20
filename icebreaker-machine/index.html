@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Icebreaker Machine</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -12,7 +12,7 @@
       width: 100%; height: 100%;
       overflow: hidden;
       background: #111;
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Work Sans', sans-serif;
     }
 
     /* ── Mosaic grid ─────────────────────────────────────────────────────── */
@@ -76,8 +76,8 @@
     }
 
     /* ── Panel colors ────────────────────────────────────────────────────── */
-    #skipPanel     { background: #D44F35; grid-row: 1 / 4; grid-column: 1; }
-    #askPanel      { background: #0C3543; grid-row: 1;     grid-column: 2; }
+    #skipPanel     { background: #E03E1A; grid-row: 1 / 4; grid-column: 1; }
+    #askPanel      { background: #6B2FD4; grid-row: 1;     grid-column: 2; }
     #submitPanel   { background: #F5C200; grid-row: 2;     grid-column: 2; }
     #classicsPanel { background: #7DC4C4; grid-row: 3;     grid-column: 2; }
     #submitPanel .panel-title,
@@ -205,37 +205,47 @@
       top: -2px;
     }
 
-    #doneBtn {
-      margin-top: 28px;
+    #modalActions {
+      margin-top: 32px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-btn {
       display: none;
       background: none;
-      border: 1.5px solid rgba(0,0,0,0.18);
+      border: 2px solid rgba(0,0,0,0.22);
       border-radius: 40px;
-      padding: 8px 20px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      color: rgba(0,0,0,0.45);
+      padding: 10px 24px;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: rgba(0,0,0,0.6);
       cursor: pointer;
-      transition: color 0.2s, border-color 0.2s;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+      text-transform: uppercase;
     }
-    #doneBtn.visible { display: inline-block; }
-    #doneBtn:hover { color: rgba(0,0,0,0.8); border-color: rgba(0,0,0,0.4); }
-    #doneBtn.struck { color: rgba(0,0,0,0.25); border-color: rgba(0,0,0,0.1); pointer-events: none; }
+    .modal-btn.visible { display: inline-block; }
+    .modal-btn:hover { color: #111; border-color: #111; }
+    .modal-btn.struck { color: rgba(0,0,0,0.2); border-color: rgba(0,0,0,0.1); pointer-events: none; }
+    #anotherBtn { background: #E03E1A; border-color: #E03E1A; color: #fff; }
+    #anotherBtn:hover { background: #c93515; border-color: #c93515; color: #fff; }
 
     #closeOverlay {
       position: absolute;
-      top: 16px; right: 20px;
+      top: 18px; left: 22px;
       background: none;
       border: none;
-      font-size: 22px;
-      color: rgba(0,0,0,0.25);
+      font-size: 26px;
+      font-weight: 700;
+      color: rgba(0,0,0,0.35);
       cursor: pointer;
       line-height: 1;
       transition: color 0.15s;
     }
-    #closeOverlay:hover { color: rgba(0,0,0,0.6); }
+    #closeOverlay:hover { color: rgba(0,0,0,0.75); }
 
     /* ── Thinking state ──────────────────────────────────────────────────── */
     #thinkingDots {
@@ -284,7 +294,7 @@
       border: 1.5px solid rgba(0,0,0,0.15);
       border-radius: 10px;
       padding: 13px 16px;
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Work Sans', sans-serif;
       font-size: 15px;
       color: #111;
       outline: none;
@@ -326,7 +336,10 @@
       <div id="thinkingDots">· · ·</div>
       <div id="promptText"></div>
       <div id="copiedHint">copied</div>
-      <button id="doneBtn">✓ done</button>
+      <div id="modalActions">
+        <button id="doneBtn" class="modal-btn">✓ Done</button>
+        <button id="anotherBtn" class="modal-btn">Another please</button>
+      </div>
     </div>
   </div>
 
@@ -537,6 +550,7 @@
     const promptText   = document.getElementById('promptText');
     const thinkingDots = document.getElementById('thinkingDots');
     const doneBtn      = document.getElementById('doneBtn');
+    const anotherBtn   = document.getElementById('anotherBtn');
     const copiedHint   = document.getElementById('copiedHint');
 
     // ── Animated constellation ────────────────────────────────────────────
@@ -667,7 +681,8 @@
 
     async function showPrompt(text, isAI = false) {
       doneBtn.classList.remove('visible', 'struck');
-      doneBtn.textContent = '✓ done';
+      doneBtn.textContent = '✓ Done';
+      anotherBtn.classList.remove('visible');
 
       // Quick shuffle
       promptText.style.display = '';
@@ -695,6 +710,7 @@
         activeUserPrompt = pick;
         await showPrompt(pick);
         doneBtn.classList.add('visible');
+        anotherBtn.classList.add('visible');
         stopThinking();
         setBusy(false);
         return;
@@ -805,10 +821,10 @@
       graduatedClassics.push(text);
       classicsQueue = [];
       doneBtn.classList.add('struck');
-      doneBtn.textContent = '✓ moved to classics';
+      doneBtn.textContent = '✓ Moved to classics';
       setTimeout(() => {
         doneBtn.classList.remove('visible', 'struck');
-        doneBtn.textContent = '✓ done';
+        doneBtn.textContent = '✓ Done';
       }, 1400);
       fetch('/api/user-prompts', {
         method: 'POST',
@@ -825,6 +841,7 @@
     // ── Prompt card interactions ───────────────────────────────────────────
     document.getElementById('closeOverlay').addEventListener('click', closeOverlay);
     overlay.addEventListener('click', e => { if (e.target === overlay) closeOverlay(); });
+    anotherBtn.addEventListener('click', () => { closeOverlay(); generate(); });
 
     promptText.addEventListener('click', () => {
       const text = promptText.textContent;
