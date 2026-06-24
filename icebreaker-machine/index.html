@@ -193,7 +193,7 @@
       padding: 60px 48px;
     }
     #promptText {
-      font-size: clamp(36px, 5.5vw, 80px);
+      font-size: clamp(54px, 8vw, 120px);
       font-weight: 700;
       color: #111;
       line-height: 1.2;
@@ -225,9 +225,9 @@
       background: transparent;
       border: none;
       border-radius: 9999px;
-      padding: 18px 44px;
+      padding: 27px 66px;
       font-family: 'Work Sans', sans-serif;
-      font-size: 18px;
+      font-size: 27px;
       font-weight: 600;
       letter-spacing: 0.06em;
       color: rgba(0,0,0,0.55);
@@ -245,6 +245,15 @@
     }
     .modal-btn:active { transform: translateY(calc(-1 * var(--lift) / 2)); transition-duration: 0.08s; }
     .modal-btn.struck { opacity: 0.2; pointer-events: none; }
+    #doneBtn {
+      background: #fff;
+      color: #111;
+      box-shadow: inset 0 0 0 1.5px rgba(0,0,0,0.1), 0 var(--lift) 0 0 rgba(0,0,0,0.15);
+    }
+    #doneBtn:hover {
+      color: #111;
+      box-shadow: inset 0 0 0 1.5px rgba(0,0,0,0.25), 0 calc(var(--lift) * 2) 0 0 rgba(0,0,0,0.15);
+    }
     #anotherBtn {
       background: #E03E1A;
       color: #fff;
@@ -259,18 +268,18 @@
 
     #closeOverlay {
       position: fixed;
-      top: 20px; right: 28px;
+      top: 10px; right: 20px;
       z-index: 3;
       background: none;
       border: none;
-      font-size: 56px;
+      font-size: 112px;
       font-weight: 300;
-      color: rgba(0,0,0,0.3);
+      color: #0C3543;
       cursor: pointer;
       line-height: 1;
       transition: color 0.15s;
     }
-    #closeOverlay:hover { color: rgba(0,0,0,0.7); }
+    #closeOverlay:hover { color: rgba(12,53,67,0.6); }
 
     /* Thinking dots over video */
     #thinkingAnim span { color: rgba(0,0,0,0.25); }
@@ -593,6 +602,45 @@
     // ── Animated constellation ────────────────────────────────────────────
     let constellationDots = [];
     let constellationRaf  = null;
+    let animTime = 0;
+
+    const _sdgSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 169.1 165.9"><path fill="#fff" d="M85.7-.1c-.4,0-.8,0-1.2,0C39.3-.1,2.2,36.4,1.6,81.7c-.6,45.8,36.1,83.5,81.9,84.1.4,0,.8,0,1.2,0,45.2,0,82.4-36.5,83-81.9C168.2,38.2,131.5.5,85.7-.1ZM84.6,158.3c-.3,0-.7,0-1,0-41.6-.6-75-34.9-74.4-76.5C9.7,40.6,43.4,7.4,84.6,7.4s.7,0,1,0c41.6.6,75,34.9,74.4,76.5-.6,41.2-34.3,74.4-75.4,74.4ZM60.3,96.1c10,0,14.3-5.7,14.3-18.9s-2.8-14.8-11.1-18.1l-3.7-1.4c-4.1-1.6-5.9-3.5-5.9-10.4s2.6-9.2,6.5-9.2,6.3,1.1,6.6,9.1c0,.7.3,1.4.8,1.8.5.4,1.2.5,1.9.3l2.5-.4h.2c1.6-.6,1.6-1.9,1.6-2.4-.3-10.3-4.9-15.5-13.8-15.5s-13.8,5.6-13.8,16.6,2.7,14.3,11.2,17.6l3.7,1.4c3.9,1.5,5.8,3.6,5.8,11.2s-3.1,11.2-6.8,11.2-6.8-1.8-7.4-10.4c0-1-.5-1.5-.8-1.8-.4-.3-1-.6-1.9-.4l-2.6.5c-.7.1-1.8.6-1.8,2.5.5,11.1,5.4,16.7,14.5,16.7ZM119.5,108.1H49.7c-1.3,0-2.3,1-2.3,2.3v10.9c0,7.7,3.3,12.4,10,14.6,3.4,1.1,7.2,1.5,21.9,1.5s28,0,32.5-1.5c6.8-2.2,10-7,10-14.6v-10.9c0-1.3-1-2.3-2.3-2.3ZM114.6,120.8c0,4.4-1.5,6.7-5.2,8-2.2.7-12.9,1.2-30.1,1.2s-16.9-.4-19.4-1.2c-3.7-1.3-5.2-3.6-5.2-8v-5.2h60v5.2ZM122,60.8h-11.5c-1.3,0-2.3,1-2.3,2.3v2.5c0,1.3,1,2.3,2.3,2.3h6.4c0,13.2-.3,14.8-.8,16.5-1,2.9-3.2,4.4-6.5,4.4s-5.5-1.5-6.5-4.4c-.6-1.9-.8-3.5-.8-21s.3-19.1.8-21c1-3,3.1-4.4,6.4-4.4s6.6,2.4,7.4,7.5c.1.7.5,1.2,1,1.6.4.2,1,.5,1.8.2l2.6-.5h.2c1.2-.4,1.8-1.5,1.6-2.8-1.1-8.5-6.3-13.2-14.5-13.2s-11.6,3.2-13.6,9.3c-1,3-1.2,5.6-1.2,23.3s.3,20.3,1.2,23.3c2,6.1,6.7,9.3,13.6,9.3s11.6-3.2,13.6-9.3c1-3,1.2-5.4,1.2-21.2v-2.4c0-1.3-1-2.3-2.3-2.3Z"/></svg>`;
+    const sdgFaceImg = new Image();
+    sdgFaceImg.src = 'data:image/svg+xml,' + encodeURIComponent(_sdgSvg);
+
+    function drawElectricLine(ctx, x1, y1, x2, y2) {
+      const dx = x2 - x1, dy = y2 - y1;
+      const len = Math.sqrt(dx*dx + dy*dy);
+      if (len < 1) return;
+      const nx = -dy/len, ny = dx/len;
+      const segs = Math.max(4, Math.floor(len / 12));
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      for (let k = 1; k < segs; k++) {
+        const t = k / segs;
+        const off = (Math.random() - 0.5) * Math.min(len * 0.15, 10);
+        ctx.lineTo(x1 + dx*t + nx*off, y1 + dy*t + ny*off);
+      }
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+    }
+
+    function drawWavyLine(ctx, x1, y1, x2, y2) {
+      const dx = x2 - x1, dy = y2 - y1;
+      const len = Math.sqrt(dx*dx + dy*dy);
+      if (len < 1) return;
+      const nx = -dy/len, ny = dx/len;
+      const segs = Math.max(8, Math.floor(len / 8));
+      const amp = Math.min(len * 0.07, 7);
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      for (let k = 1; k <= segs; k++) {
+        const t = k / segs;
+        const wave = Math.sin(t * Math.PI * 4 + animTime * 3) * amp;
+        ctx.lineTo(x1 + dx*t + nx*wave, y1 + dy*t + ny*wave);
+      }
+      ctx.stroke();
+    }
 
     function initDots(count) {
       const cvs = document.getElementById('dotField');
@@ -616,44 +664,56 @@
       if (!cvs) return;
       const W = cvs.width, H = cvs.height;
       const ctx = cvs.getContext('2d');
-      const pad = 6;
+      const faceSize = 34;
+      const facePad = faceSize / 2 + 4;
       ctx.clearRect(0, 0, W, H);
+      animTime += 0.016;
 
       // Move & bounce
       constellationDots.forEach(d => {
         d.x += d.vx;
         d.y += d.vy;
-        if (d.x < pad || d.x > W - pad) { d.vx *= -1; d.x = Math.max(pad, Math.min(W - pad, d.x)); }
-        if (d.y < pad || d.y > H - pad) { d.vy *= -1; d.y = Math.max(pad, Math.min(H - pad, d.y)); }
+        if (d.x < facePad || d.x > W - facePad) { d.vx *= -1; d.x = Math.max(facePad, Math.min(W - facePad, d.x)); }
+        if (d.y < facePad || d.y > H - facePad) { d.vy *= -1; d.y = Math.max(facePad, Math.min(H - facePad, d.y)); }
       });
 
-      // Lines between nearby pairs
+      // Lines with varied styles: 0=electric, 1=wavy, 2=dashed
       const threshold = Math.min(W, H) * 0.3;
-      ctx.lineWidth = 0.8;
+      ctx.lineWidth = 0.9;
+      ctx.strokeStyle = 'rgba(255,255,255,1)';
+      let hasDash = false;
       for (let i = 0; i < constellationDots.length; i++) {
         for (let j = i + 1; j < constellationDots.length; j++) {
-          const dx = constellationDots[i].x - constellationDots[j].x;
-          const dy = constellationDots[i].y - constellationDots[j].y;
-          const dist = Math.sqrt(dx*dx + dy*dy);
+          const ddx = constellationDots[i].x - constellationDots[j].x;
+          const ddy = constellationDots[i].y - constellationDots[j].y;
+          const dist = Math.sqrt(ddx*ddx + ddy*ddy);
           if (dist < threshold) {
-            ctx.globalAlpha = (1 - dist / threshold) * 0.4;
-            ctx.strokeStyle = 'rgba(255,255,255,1)';
-            ctx.beginPath();
-            ctx.moveTo(constellationDots[i].x, constellationDots[i].y);
-            ctx.lineTo(constellationDots[j].x, constellationDots[j].y);
-            ctx.stroke();
+            ctx.globalAlpha = (1 - dist / threshold) * 0.45;
+            const style = (i * 13 + j * 7) % 3;
+            if (style === 2 && !hasDash) { ctx.setLineDash([4, 7]); hasDash = true; }
+            if (style !== 2 && hasDash)  { ctx.setLineDash([]);     hasDash = false; }
+            if (style === 0) {
+              drawElectricLine(ctx, constellationDots[i].x, constellationDots[i].y, constellationDots[j].x, constellationDots[j].y);
+            } else if (style === 1) {
+              drawWavyLine(ctx, constellationDots[i].x, constellationDots[i].y, constellationDots[j].x, constellationDots[j].y);
+            } else {
+              ctx.beginPath();
+              ctx.moveTo(constellationDots[i].x, constellationDots[i].y);
+              ctx.lineTo(constellationDots[j].x, constellationDots[j].y);
+              ctx.stroke();
+            }
           }
         }
       }
+      if (hasDash) ctx.setLineDash([]);
 
-      // Dots
-      ctx.globalAlpha = 0.75;
-      ctx.fillStyle = '#fff';
-      constellationDots.forEach(d => {
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, 2.4, 0, Math.PI * 2);
-        ctx.fill();
-      });
+      // SDG faces instead of dots
+      if (sdgFaceImg.complete && sdgFaceImg.naturalWidth > 0) {
+        ctx.globalAlpha = 0.8;
+        constellationDots.forEach(d => {
+          ctx.drawImage(sdgFaceImg, d.x - faceSize/2, d.y - faceSize/2, faceSize, faceSize);
+        });
+      }
 
       constellationRaf = requestAnimationFrame(tickDots);
     }
