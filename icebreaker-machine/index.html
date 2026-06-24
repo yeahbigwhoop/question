@@ -723,7 +723,7 @@
       const ctx = cvs.getContext('2d');
       const faceSize = 34;
       const facePad = faceSize / 2 + 4;
-      const repulseR = faceSize * 1.5;
+      const collideD = faceSize * 0.85;
       const maxSpeed = 1.4;
       ctx.clearRect(0, 0, W, H);
       animTime += 0.016;
@@ -770,14 +770,23 @@
           const ddy = constellationDots[i].y - constellationDots[j].y;
           const dist = Math.sqrt(ddx*ddx + ddy*ddy);
 
-          // Soft repulsion — keeps faces from piling up
-          if (dist < repulseR && dist > 0.1) {
-            const force = (repulseR - dist) / repulseR * 0.025;
-            const fx = ddx/dist * force, fy = ddy/dist * force;
-            constellationDots[i].vx += fx; constellationDots[i].vy += fy;
-            constellationDots[j].vx -= fx; constellationDots[j].vy -= fy;
-            constellationDots[i].rotVel += (Math.random()-0.5)*0.006;
-            constellationDots[j].rotVel += (Math.random()-0.5)*0.006;
+          // Elastic collision — faces bounce off each other instead of overlapping
+          if (dist < collideD && dist > 0.1) {
+            const nx = ddx / dist, ny = ddy / dist;
+            // Push apart equally so they never overlap
+            const overlap = (collideD - dist) / 2;
+            const a = constellationDots[i], b = constellationDots[j];
+            a.x += nx * overlap; a.y += ny * overlap;
+            b.x -= nx * overlap; b.y -= ny * overlap;
+            // Exchange velocity along the collision normal (equal mass, elastic)
+            const relN = (a.vx - b.vx) * nx + (a.vy - b.vy) * ny;
+            if (relN < 0) {
+              a.vx -= relN * nx; a.vy -= relN * ny;
+              b.vx += relN * nx; b.vy += relN * ny;
+              // Impact transfers a bit of spin
+              a.rotVel -= relN * 0.04;
+              b.rotVel += relN * 0.04;
+            }
           }
 
           // Styled connection lines
