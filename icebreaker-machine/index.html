@@ -342,6 +342,23 @@
       min-height: 20px;
     }
 
+    /* ── Mode hint ───────────────────────────────────────────────────────── */
+    #modeHint {
+      position: fixed;
+      bottom: 14px;
+      right: 16px;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      pointer-events: none;
+      z-index: 10;
+      opacity: 1;
+      transition: opacity 2s ease;
+    }
+    #modeHint.gone { opacity: 0; }
+
     /* ── Mobile overrides (must come last to win the cascade) ────────────── */
     @media (max-width: 768px) {
       #mosaic {
@@ -390,6 +407,9 @@
       <div class="panel-title">SDG Classics</div>
     </button>
   </div>
+
+  <!-- Mode indicator -->
+  <div id="modeHint"></div>
 
   <!-- Prompt overlay -->
   <div id="promptOverlay">
@@ -1209,6 +1229,13 @@
         body: JSON.stringify({ text }),
       }).catch(() => {});
     });
+
+    // ── Mode hint ─────────────────────────────────────────────────────────
+    (function() {
+      const hint = document.getElementById('modeHint');
+      hint.textContent = cursorMode;
+      setTimeout(() => hint.classList.add('gone'), 2500);
+    })();
 
     // ── Spacebar shortcut ─────────────────────────────────────────────────
     document.addEventListener('keydown', e => {
