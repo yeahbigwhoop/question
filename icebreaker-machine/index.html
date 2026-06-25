@@ -604,6 +604,7 @@
     let animTime = 0;
     let mousePos = { x: null, y: null };
     let mouseVel = { x: 0, y: 0 };
+    let textObstacle = null;
     // Pick one cursor "personality" at random each load
     const CURSOR_MODES = ['repel', 'orbit', 'swipe', 'node'];
     const cursorMode = CURSOR_MODES[Math.floor(Math.random() * CURSOR_MODES.length)];
@@ -701,6 +702,33 @@
       ctx.restore();
     }
 
+    // Measure the "Get a question" title's box in canvas coordinates so faces can bounce off it
+    function computeTextObstacle() {
+      const cvs = document.getElementById('dotField');
+      const title = document.querySelector('#skipPanel .panel-title');
+      if (!cvs || !title) { textObstacle = null; return; }
+      const cr = cvs.getBoundingClientRect();
+      const tr = title.getBoundingClientRect();
+      textObstacle = { x: tr.left - cr.left, y: tr.top - cr.top, w: tr.width, h: tr.height };
+    }
+
+    // Bounce a face off the text box (treated as a solid AABB, padded by face radius)
+    function resolveTextCollision(d, r) {
+      if (!textObstacle) return;
+      const bx = textObstacle.x - r, by = textObstacle.y - r;
+      const bw = textObstacle.w + 2*r, bh = textObstacle.h + 2*r;
+      if (d.x > bx && d.x < bx + bw && d.y > by && d.y < by + bh) {
+        const dl = d.x - bx, dr = (bx + bw) - d.x;
+        const dt = d.y - by, db = (by + bh) - d.y;
+        const m = Math.min(dl, dr, dt, db);
+        if      (m === dl) { d.x = bx;      d.vx = -Math.abs(d.vx); }
+        else if (m === dr) { d.x = bx + bw; d.vx =  Math.abs(d.vx); }
+        else if (m === dt) { d.y = by;      d.vy = -Math.abs(d.vy); }
+        else               { d.y = by + bh; d.vy =  Math.abs(d.vy); }
+        d.rotVel += (Math.random() - 0.5) * 0.04;
+      }
+    }
+
     function initDots(count) {
       const cvs = document.getElementById('dotField');
       if (!cvs) return;
@@ -708,6 +736,7 @@
       const H = cvs.parentElement.offsetHeight;
       cvs.width  = W;
       cvs.height = H;
+      computeTextObstacle();
       const pad = 52;
       const speed = 0.77;
       constellationDots = Array.from({ length: count }, () => ({
@@ -745,6 +774,7 @@
         if (d.x > W-facePad) { d.vx = -Math.abs(d.vx); d.x = W-facePad; d.rotVel += (Math.random()-0.5)*0.04; }
         if (d.y < facePad)   { d.vy =  Math.abs(d.vy); d.y = facePad;   d.rotVel += (Math.random()-0.5)*0.04; }
         if (d.y > H-facePad) { d.vy = -Math.abs(d.vy); d.y = H-facePad; d.rotVel += (Math.random()-0.5)*0.04; }
+        resolveTextCollision(d, faceSize / 2);
       });
 
       // Cursor interaction — behavior depends on the mode chosen at load
@@ -787,16 +817,24 @@
       let hasDash = false;
       for (let i = 0; i < constellationDots.length; i++) {
         for (let j = i + 1; j < constellationDots.length; j++) {
-          const ddx = constellationDots[i].x - constellationDots[j].x;
-          const ddy = constellationDots[i].y - constellationDots[j].y;
+          const a = constellationDots[i], b = constellationDots[j];
+          const ddx = a.x - b.x;
+          const ddy = a.y - b.y;
           const dist = Math.sqrt(ddx*ddx + ddy*ddy);
+
+          // Node mode: every face pulls on every other — competing gravities
+          if (cursorMode === 'node' && dist > collideD) {
+            const g = Math.min(0.35 / dist, 0.011);
+            const gx = ddx/dist * g, gy = ddy/dist * g;
+            a.vx -= gx; a.vy -= gy;
+            b.vx += gx; b.vy += gy;
+          }
 
           // Elastic collision — faces bounce off each other instead of overlapping
           if (dist < collideD && dist > 0.1) {
             const nx = ddx / dist, ny = ddy / dist;
             // Push apart equally so they never overlap
             const overlap = (collideD - dist) / 2;
-            const a = constellationDots[i], b = constellationDots[j];
             a.x += nx * overlap; a.y += ny * overlap;
             b.x -= nx * overlap; b.y -= ny * overlap;
             // Exchange velocity along the collision normal (equal mass, elastic)
@@ -922,6 +960,8 @@
       if (constellationRaf) { cancelAnimationFrame(constellationRaf); constellationRaf = null; }
       if (userPrompts.length > 0) { initDots(userPrompts.length); tickDots(); }
     });
+    // Re-measure the text box once the web font has loaded (its width can shift)
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(computeTextObstacle);
 
     (function() {
       const panel = document.getElementById('skipPanel');
